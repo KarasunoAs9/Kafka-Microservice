@@ -35,7 +35,7 @@ func findMaxArea(partitionConsumer sarama.PartitionConsumer, done chan bool) ent
 			}
 
 			fmt.Println("Recieved message: ", string(msg.Value))
-		
+
 		case done <- true:
 			fmt.Println("Stopping message queue")
 			return MaxHouse
@@ -44,5 +44,24 @@ func findMaxArea(partitionConsumer sarama.PartitionConsumer, done chan bool) ent
 }
 
 func HandlerConsumer() {
+	config := sarama.NewConfig()
+	config.Producer.Return.Errors = true
 
+	consumer, err := sarama.NewConsumer([]string{"localhost:9092"}, config)
+	if err != nil {
+		fmt.Printf("error with creating consumer: %v", err)
+	}
+
+	defer consumer.Close()
+
+	partitionConsumer, err := consumer.ConsumePartition("house_topic", 0, sarama.OffsetNewest)
+	if err != nil {
+		fmt.Printf("error with consumer: %v", err)
+	}
+	
+	defer partitionConsumer.Close()
+
+	done := make(chan bool)
+
+	findMaxArea(partitionConsumer, done)
 }
