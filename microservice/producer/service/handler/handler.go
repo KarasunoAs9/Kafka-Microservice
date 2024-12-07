@@ -9,7 +9,6 @@ import (
 	entity_producer "github.com/KarasunoAs9/microservice-go/microservice/producer/service/entity"
 )
 
-
 func readHouseForFile(fileName string) ([]entity_producer.House, error) {
 	data, err := os.ReadFile(fileName)
 	if err != nil {
@@ -23,8 +22,7 @@ func readHouseForFile(fileName string) ([]entity_producer.House, error) {
 	}
 
 	return houses, nil
-} 
-
+}
 
 func HandlerProducer() {
 	houses, err := readHouseForFile("house.json")
@@ -41,7 +39,6 @@ func HandlerProducer() {
 	}
 
 	defer producer.Close()
-
 
 	for _, house := range houses {
 		message, err := json.Marshal(house)
