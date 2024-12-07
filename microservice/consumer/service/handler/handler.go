@@ -36,7 +36,7 @@ func findMaxArea(partitionConsumer sarama.PartitionConsumer, done chan bool) ent
 
 			fmt.Println("Recieved message: ", string(msg.Value))
 
-		case done <- true:
+		case <-done:
 			fmt.Println("Stopping message queue")
 			return MaxHouse
 		}
@@ -63,5 +63,6 @@ func HandlerConsumer() {
 
 	done := make(chan bool)
 
-	findMaxArea(partitionConsumer, done)
+	maxArea := findMaxArea(partitionConsumer, done)
+	fmt.Println("House with max area: ", maxArea)
 }
